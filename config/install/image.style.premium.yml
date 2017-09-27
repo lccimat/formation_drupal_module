@@ -1,0 +1,13 @@
+status: true
+dependencies: {  }
+name: premium
+label: 'Premium'
+effects:
+  makina_pemium:
+    uuid: makina_pemium
+    id: image_scale
+    weight: 1
+    data:
+      width: 400
+      height: 400
+      upscale: false

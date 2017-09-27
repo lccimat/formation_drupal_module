@@ -1,0 +1,5 @@
+services:
+  makina.deny_edit_user_route_subscriber:
+    class: Drupal\makina\Routing\RouteSubscriber\DenyUserEditSubscriber
+    tags:
+      - { name: event_subscriber }

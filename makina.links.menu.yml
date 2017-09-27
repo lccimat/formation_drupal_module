@@ -1,0 +1,7 @@
+makina.premium_content_types_form:
+  title: 'PremiumContentTypesForm'
+  route_name: makina.premium_content_types_form
+  description: 'A description for the menu entry'
+  parent: system.admin_config_system
+  weight: 99
+

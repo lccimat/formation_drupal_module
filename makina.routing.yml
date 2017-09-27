@@ -1,0 +1,39 @@
+
+makina.is_premium_controller_showstatus:
+  path: '/suis-je-premium'
+  defaults:
+    _controller: '\Drupal\makina\Controller\IsPremiumController::showstatus'
+    _title: 'suisje_premium'
+  requirements:
+    _permission: 'access content'
+makina.is_premium_controller_showuserstatus:
+  path: 'ext-il-premium/{user}'
+  defaults:
+    _controller: '\Drupal\makina\Controller\IsPremiumController::showuserstatus'
+    _title: 'Suis-je premium'
+  requirements:
+    _permission: 'access content'
+makina.is_premium_controller_premiumpage:
+  path: 'page-premium'
+  defaults:
+    _controller: '\Drupal\makina\Controller\IsPremiumController::premiumpage'
+    _title: 'Page premium'
+  requirements:
+    _permission: 'view_premium'
+makina.is_premium_controller_listpremiumusers:
+  path: 'premium-users'
+  defaults:
+    _controller: '\Drupal\makina\Controller\IsPremiumController::listPremiumUsers'
+    _title: 'Page premium'
+  requirements:
+      _permission: 'access content'
+makina.premium_content_types_form:
+  path: '/admin/config/makina/premiumcontenttypes'
+  defaults:
+    _form: '\Drupal\makina\Form\PremiumContentTypesForm'
+    _title: 'PremiumContentTypesForm'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+

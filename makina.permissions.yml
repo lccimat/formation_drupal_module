@@ -1,0 +1,7 @@
+manage_premium:
+  title: 'Manage premium settings'
+  description: 'Make a content premium'
+  restrict access: true
+view_premium:
+  title: 'View premium'
+  description: 'View premium content'

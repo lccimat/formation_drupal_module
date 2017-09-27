@@ -1,0 +1,133 @@
+<?php
+
+/**
+ * @file
+ * Contains makina.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function makina_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the makina module.
+    case 'help.page.makina':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Makina Formation') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function makina_theme() {
+  return [
+    'makina' => [
+      'render element' => 'children',
+    ],
+    'makina_premium_status_block_content' => [
+      'variables' => ['text' => '']
+    ],
+    'makina_premium_status_block_content_test' => [
+      'variables' => ['text' => '', 'testeee'=>'']
+    ]
+  ];
+}
+
+/**
+ * Implements hook_block_view_alter()
+ * @param array $build
+ * @param \Drupal\Core\Block\BlockPluginInterface $block
+ */
+function makina_block_view_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
+  if ($block->getBaseId() == 'premium_status') {
+    $build['#pre_render'][] = 'makina_test_rerend';
+
+  }
+}
+
+function makina_test_rerend(array &$build){
+  if(!\Drupal::currentUser()->hasPermission('view_premium')){
+    $build['#attributes']['class'][] = "no-premium-access";
+  }else{
+    $build['#attributes']['class'][] = "premium-access-granted";
+  }
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter()
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+function makina_form_node_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+
+  $config = \Drupal::config('makina.premiumcontenttypes')->get('content_types');
+
+  $node = $form_state->getFormObject()->getEntity();
+  if(isset($config) && isset($config[$node->getType()]) && $config[$node->getType()] === $config[$node->getType()]) {
+
+    $form['premium'] = array(
+      '#type' => 'checkbox',
+      '#title' => t("Premium content"),
+      '#weight' => -99
+    );
+
+    $form['actions']['submit']['#submit'][] = 'makina_node_save_premium';
+    $form['actions']['publish']['#submit'][] = 'makina_node_save_premium';
+    $form['actions']['unpublish']['#submit'][] = 'makina_node_save_premium';
+
+    //dpm($form);
+
+    if($node->id()){
+      $res = \Drupal::database()->select('makina_node_premium', 'np')
+        ->fields('np', ['premium'])
+        ->condition('np.nid', $node->id())
+        ->execute()
+        ->fetchField();
+      if($res){
+        $form['premium']['#default_value'] = $res;
+      }
+    }
+  }
+
+}
+
+/**
+ * Form submit handler for node form when premium can be set
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
+function makina_node_save_premium(&$form, \Drupal\Core\Form\FormStateInterface $form_state){
+
+  if(isset($form['premium'])){
+    $val = $form_state->getValue('premium');
+    if($val != 1){
+      $val = 0;
+    }
+    $node = $form_state->getFormObject()->getEntity();
+    $res = \Drupal::database()->select('makina_node_premium', 'np')
+      ->fields('np', ['premium'])
+      ->condition('np.nid', $node->id())
+      ->execute()
+      ->fetchAssoc();
+
+    if($res){
+      \Drupal::database()->update('makina_node_premium')
+        ->condition('nid', $node->id())
+        ->fields(['nid' => $node->id(), 'premium' => $val])
+        ->execute();
+    }else{
+      \Drupal::database()->insert('makina_node_premium')
+        ->fields(['nid', 'premium'])
+        ->values([$node->id(), $val])
+        ->execute();
+    }
+  }
+}

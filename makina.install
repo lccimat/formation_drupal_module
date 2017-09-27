@@ -1,0 +1,40 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: mlecain
+ * Date: 27/09/2017
+ * Time: 11:08
+ */
+
+function makina_schema(){
+
+  $schema['makina_node_premium'] = [
+    'description' => 'store whether the node is premium or not',
+    'fields' => [
+      'nid'       => array('type' => 'int', 'not null' => TRUE, 'default' => 0),
+      'premium' => array('type' => 'int', 'not null' => TRUE, 'default' => 0),
+    ],
+    'unique keys' => array(
+      'nid' => array('nid'),
+    ),
+    'foreign keys' => array(
+      'target_node' => array(
+        'table' => 'node',
+        'columns' => array('nid' => 'nid'),
+      ),
+    ),
+  ];
+
+  return $schema;
+
+}
+
+
+/**
+ *
+ */
+function makina_uninstall(){
+  \Drupal::database()->schema()->dropTable('makina_node_premium');
+  \Drupal\image\Entity\ImageStyle::load('premium')->delete();
+  \Drupal\image\Entity\ImageStyle::load('nopremium')->delete();
+}

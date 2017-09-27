@@ -1,0 +1,13 @@
+status: true
+dependencies: {  }
+name: nopremium
+label: 'No Premium'
+effects:
+  makina_nopemium:
+    uuid: makina_nopemium
+    id: image_scale
+    weight: 1
+    data:
+      width: 100
+      height: 100
+      upscale: false

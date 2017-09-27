@@ -1,0 +1,5 @@
+name: makina
+type: module
+description: Makina Formation
+core: 8.x
+package: Custom

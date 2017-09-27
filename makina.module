@@ -99,6 +99,8 @@ function makina_form_node_form_alter(&$form, \Drupal\Core\Form\FormStateInterfac
 
 }
 
+
+
 /**
  * Form submit handler for node form when premium can be set
  * @param $form
@@ -128,6 +130,35 @@ function makina_node_save_premium(&$form, \Drupal\Core\Form\FormStateInterface $
         ->fields(['nid', 'premium'])
         ->values([$node->id(), $val])
         ->execute();
+    }
+  }
+}
+
+
+/**
+ * Implements hook_node_access()
+ * @param \Drupal\node\NodeInterface $node
+ * @param $op
+ * @param \Drupal\Core\Session\AccountInterface $account
+ */
+function makina_node_access(\Drupal\node\NodeInterface $node, $op, \Drupal\Core\Session\AccountInterface $account) {
+  if($op == 'view'){
+    $config_content_types = \Drupal::config('makina.premiumcontenttypes')->get('content_types');
+
+    if(isset($config_content_types) && isset($config_content_types[$node->getType()]) &&
+      $config_content_types[$node->getType()] === $config_content_types[$node->getType()]) {
+
+      $res = \Drupal::database()->select('makina_node_premium', 'np')
+        ->fields('np', ['premium'])
+        ->condition('np.nid', $node->id())
+        ->condition('np.premium', 1)
+        ->execute()
+        ->fetchAssoc();
+
+      if($res && !\Drupal::currentUser()->hasPermission('view_premium')){
+        return \Drupal\Core\Access\AccessResult::forbidden();
+      }
+
     }
   }
 }
